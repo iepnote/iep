@@ -1,0 +1,9 @@
+# 학생 정보가 들어 있을 수 있는 파일 — 절대 커밋 금지
+*.json
+*.hwpx
+*.hwp
+IEP작업파일*
+개별화교육계획*
+# 시스템
+desktop.ini
+Thumbs.db
