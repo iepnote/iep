@@ -3,7 +3,7 @@
 <head><meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>개별화교육계획(IEP) 초안 도우미 v4.16</title>
+<title>개별화교육계획(IEP) 초안 도우미 v4.21</title>
 <style>
 :root{
   --ink:#1a2233; --sub:#5a6478; --line:#dfe4ee; --bg:#f4f6fb; --card:#ffffff;
@@ -116,7 +116,6 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
 .fpv th{background:#eef1f8;}
 .summary-sec{margin-bottom:20px;}
 .summary-sec h3{font-size:15px; font-weight:800; margin-bottom:8px; border-left:4px solid var(--accent); padding-left:9px;}
-.mono-out{white-space:pre-wrap; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:14px; font-size:13px; max-height:300px; overflow:auto;}
 .tag{display:inline-block; font-size:11.5px; background:var(--accent-soft); color:var(--accent); font-weight:700; border-radius:6px; padding:1px 8px; margin-right:5px;}
 @media print{
   body{background:#fff;}
@@ -130,7 +129,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
 <body>
 <div class="wrap">
   <header class="app no-print">
-    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.16</span>
+    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.21</span>
   </header>
   <div class="disclaimer no-print">
     ⚠️ 본 도구가 생성하는 내용은 <b>개별화교육지원팀 협의용 초안</b>입니다. 최종 개별화교육계획은 반드시 지원팀 협의와 교사의 전문적 판단을 거쳐 확정하고, 나이스(NEIS)에 입력해 주세요. 학생 개인정보 보호를 위해 <b>실명 대신 가명이나 이니셜</b> 사용을 권장합니다.
@@ -167,12 +166,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
     </div>
     <div class="field"><label>장애 특성 <span class="opt">(해당 항목 선택)</span></label>
       <div class="chips" id="f-disability">
-        <button class="chip" data-v="자폐성장애">자폐성장애</button>
-        <button class="chip" data-v="지적장애">지적장애</button>
-        <button class="chip" data-v="지체장애">지체장애</button>
-        <button class="chip" data-v="의사소통장애">의사소통장애</button>
-        <button class="chip" data-v="발달지체">발달지체</button>
-        <button class="chip" data-v="중복장애">중복장애</button>
+        <button class="chip" data-v="자폐성장애">자폐성장애</button><button class="chip" data-v="지적장애">지적장애</button><button class="chip" data-v="시각장애">시각장애</button><button class="chip" data-v="청각장애">청각장애</button><button class="chip" data-v="지체장애">지체장애</button><button class="chip" data-v="학습장애">학습장애</button><button class="chip" data-v="의사소통장애">의사소통장애</button><button class="chip" data-v="발달지체">발달지체</button><button class="chip" data-v="정서행동장애">정서행동장애</button>
       </div>
     </div>
     <div class="field"><label>강점·흥미 <span class="opt">(목표 문장과 활동 예시에 반영됩니다)</span></label>
@@ -180,10 +174,11 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
     <div class="field"><label>작년 개별화교육계획 요약 <span class="opt">(선택 — 주요 목표와 달성 여부)</span></label>
       <textarea id="f-lastIEP" placeholder="예: [작년 국어 장기목표] 한 문장으로 자신의 요구 말하기 → 언어적 촉진 하에 달성 / 두 문장 잇기 → 미도달"></textarea>
       <div class="btns" style="margin-top:8px">
-        <label class="btn" style="display:inline-block">📄 개별화·평가서에서 가져오기 (hwpx)<input type="file" accept=".hwpx" multiple style="display:none" onchange="importHwpx(this)"></label>
+        <label class="btn" style="display:inline-block">📄 개별화·평가서·협의록에서 가져오기 (hwpx)<input type="file" accept=".hwpx" multiple style="display:none" onchange="importHwpx(this)"></label>
+        <button class="btn" id="import-undo" style="display:none" onclick="undoImport()">↩ 가져오기 되돌리기</button>
         <label class="btn" style="display:inline-block">📂 작업 파일 열기 (.json)<input type="file" accept=".json" style="display:none" onchange="loadJson(this)"></label>
       </div>
-      <p class="hint" style="margin:6px 0 0">작년(지난 학기) 개별화교육계획·평가서 hwpx를 여러 개 선택하면 현행수준·목표·평가 결과를 읽어 이 칸과 교과별 현행수준에 자동으로 채웁니다. ※.hwp는 한글에서 hwpx로 다시 저장 후 사용 · 가져온 <b>개별화교육계획</b> 파일은 마지막 단계 「우리 학교 양식 내려받기」의 양식으로, <b>개별화교육지원팀 협의록</b>은 학부모·지원팀 의견 자동 채움과 「이번 학기 협의록 만들기」의 양식으로 쓰입니다.</p>
+      <p class="hint" style="margin:6px 0 0">지난 학기 <b>개별화교육계획·평가서</b>는 현행수준·목표·평가 결과를 읽어 이 칸과 교과별 현행수준에, <b>협의록</b>은 학부모 의견·지원팀 의견 칸에만 채웁니다(이 칸에는 안 들어감). 현행수준은 평가서 서술 &gt; 계획서 연초 현행수준 &gt; 협의록 순으로 씁니다. ※.hwp는 한글에서 hwpx로 다시 저장 후 사용 · 가져온 <b>개별화교육계획</b> 파일은 마지막 단계 「우리 학교 양식 내려받기」의 양식으로, <b>개별화교육지원팀 협의록</b>은 학부모·지원팀 의견 자동 채움과 「이번 학기 협의록 만들기」의 양식으로 쓰입니다.</p>
       <p class="hint" id="school-form-note" style="margin:4px 0 0"></p></div>
     <div class="field"><label>학부모 의견 <span class="opt">(선택 — 협의록 hwpx를 가져오면 자동)</span></label>
       <textarea id="f-parent" placeholder="예: 스스로 화장실 사용하기, 친구들과 어울리기를 희망함"></textarea></div>
@@ -211,7 +206,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
     <div class="field" id="s2-pl-wrap" style="display:none">
       <label>이 교과(영역)의 현재 학습 수행 수준</label>
       <textarea id="f-present" placeholder="예: 교사가 이름을 부르면 쳐다보며, 좋아하는 사물의 이름을 듣고 해당 그림카드를 고를 수 있음. 두 단어 지시 따르기는 언어적 촉진이 필요함."></textarea>
-      <div class="btns" style="margin-top:6px"><button type="button" class="btn" id="present-check-btn" onclick="togglePresentChecklist()">✅ 할 수 있는 것 체크로 채우기</button></div>
+      <div class="btns" style="margin-top:6px"><button type="button" class="btn" onclick="togglePresentChecklist()">✅ 할 수 있는 것 체크로 채우기</button></div>
       <div id="present-checklist" style="display:none;margin-top:6px;background:#eef8f3;border:1px solid #cfe8dc;border-radius:10px;padding:12px 14px">
         <p class="hint" style="margin:0 0 8px">학생이 <b>이미 할 수 있는 것</b>을 체크하면 현행수준 문장이 자동으로 정리됩니다. (체크한 내용은 위 칸에 채워지며, 자유롭게 다듬을 수 있어요. 이 수준은 다음 단계에서 학습 출발점 제안으로도 이어집니다.)</p>
         <div id="present-check-body"></div>
@@ -259,7 +254,6 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
     <div class="btns no-print">
       <button class="btn primary" onclick="startNewSubject()">＋ 다른 교과 추가</button>
       <button class="btn" onclick="copyForNeis()">📋 나이스 입력용 복사</button>
-      <button class="btn" onclick="downloadMd()">⬇ 마크다운(.md) 저장</button>
       <button class="btn" onclick="window.print()">🖨 인쇄 / PDF 저장</button>
       <button class="btn" onclick="saveJson()">💾 작업 파일 저장(.json)</button>
       <label class="btn" style="display:inline-block">📂 작업 파일 열기<input type="file" accept=".json" style="display:none" onchange="loadJson(this)"></label>
@@ -439,6 +433,7 @@ const CURS=[
  {id:"공통",t:"공통 교육과정",d:"일반 초등 교육과정(2022 개정). 통합학급 수업 및 교과 학습이 가능한 학생 (국어·수학 — 주별 활동은행은 1~4학년군까지, 5~6학년군은 교육과정 반영 후 제공 예정)"},
  {id:"생활",t:"생활지원 중심",d:"교과 외 일상생활·의사소통·사회성·행동지원 등 생활 기술 중심의 계획"}
 ];
+let PRESENT_AUTO=null; // 마지막으로 자동 채운 현행수준(이 값 그대로면 교과 변경 시 교체)
 function renderS2(){
   const box=$("#s2-cur"); box.innerHTML="";
   CURS.forEach(c=>{
@@ -512,10 +507,13 @@ function renderS2(){
   // 현행수준 + 다음버튼
   const ready = state.cur==="생활" ? !!state.subj : !!(state.cur&&state.subj&&state.grade);
   $("#s2-pl-wrap").style.display=ready?"block":"none";
-  /* v3.8: 가져온 개별화·평가서에서 이 교과의 수행수준을 자동 제안 (빈 칸일 때만) */
-  if(ready&&!$("#f-present").value.trim()&&IMPORTED_PRESENT[state.subj]){
-    $("#f-present").value=IMPORTED_PRESENT[state.subj];
-    toast(`가져온 평가서·개별화에서 ${state.subj} 수행수준을 채웠어요 — 확인 후 수정하세요`);
+  /* v3.8: 가져온 개별화·평가서에서 이 교과의 수행수준을 자동 제안. v4.17: 교과를 바꾸면 자동 채운 값은 새 교과 것으로 교체(직접 쓴 글은 보존) */
+  if(ready){
+    const cur=$("#f-present").value.trim(), imp=IMPORTED_PRESENT[state.subj]||"";
+    if((!cur||cur===PRESENT_AUTO)&&cur!==imp){
+      $("#f-present").value=imp; PRESENT_AUTO=imp||null;
+      if(imp)toast(`가져온 평가서·개별화에서 ${state.subj} 수행수준을 채웠어요 — 확인 후 수정하세요`);
+    }
   }
   $("#s2-next").disabled=!ready;
   if(ready){$("#s2-count").textContent=`(성취기준 ${pool().length}개)`; renderPresentChecklist();}
@@ -752,8 +750,8 @@ function semMonths(sem){
   return labels;
 }
 
-function weekCounts(k){ // 양식(FORMPACK)의 월 블록 행 수 = 주 수 (하드코딩 금지)
-  const mo=FORMPACK.hmap.monthly[k]||FORMPACK.hmap.monthly["국어"];
+function weekCounts(k){ // 내장 양식(HMAP)의 월 블록 행 수 = 주 수 (하드코딩 금지)
+  const mo=HMAP.monthly[k]||HMAP.monthly["국어"];
   return mo.blocks.map(b=>b.length);
 }
 /* v4.5: 활동은행 8단계를 학기 수준에 맞춰 분할 — 1학기=앞 구간(g1, 쉬움), 2학기=뒤 구간(g2, 성취기준 수준).
@@ -987,7 +985,6 @@ function renderSummary(){
     }
     h+=`</div>`;
   });
-  h+=`<div class="summary-sec"><h3>비고</h3><p style="font-size:13px">본 문서는 개별화교육계획 수립을 위한 협의용 초안으로, 개별화교육지원팀 협의를 거쳐 확정한다.</p></div>`;
   box.innerHTML=h;
 }
 function delPlan(i){state.plans.splice(i,1);renderSummary();renderNav(9);}
@@ -1019,28 +1016,9 @@ function copyForNeis(){
   navigator.clipboard.writeText(t).then(()=>toast("복사 완료! 나이스에 항목별로 붙여 넣으세요"))
   .catch(()=>{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();toast("복사 완료!");});
 }
-function downloadMd(){
-  const p=state.profile;
-  let md=`# ${p.year} 개별화교육계획 초안 (협의용) — ${p.name}\n\n> v4.16 도구로 생성한 초안입니다. 개별화교육지원팀 협의 후 확정하세요.\n\n| 항목 | 내용 |\n|---|---|\n| 학년 | ${p.grade} |\n| 장애 특성 | ${p.disability||"-"} |\n| 강점·흥미 | ${p.strength||"-"} |\n| 전년도 IEP | ${p.lastIEP||"-"} |\n| 학부모 의견 | ${p.parent||"-"} |\n| 지원팀 의견 | ${(p.team||"-").replace(/\n/g," / ")} |\n`;
-  state.plans.forEach(pl=>{
-    md+=`\n## ${pl.subj} (${pl.cur}${pl.grade?" · "+pl.grade:""})\n\n**현재 학습 수행 수준**: ${pl.present||"-"}\n`;
-    const sems=semMode()==="1"?["1"]:semMode()==="2"?["2"]:["1","2"];
-    pl.items.forEach(it=>{
-      md+=`\n### [${it.code}] ${it.std}\n\n| 구분 | 내용 |\n|---|---|\n| 장기목표(연간) | ${it.text} |\n`;
-      if(sems.includes("1"))md+=`| 1학기 단기목표 | ${it.sem1} |\n`;
-      if(sems.includes("2"))md+=`| 2학기 단기목표 | ${it.sem2} |\n`;
-      md+=`| 평가 | 관찰·체크리스트 / ${it.crit} |\n`;
-    });
-    if(pl.weekly)sems.forEach(s=>{
-      md+=`\n#### ${s}학기 주별 지도 계획\n\n| 월 | 주 | 지도 내용·활동 |\n|---|---|---|\n`;
-      pl.weekly[s].forEach(r=>{md+=`| ${r.m} | ${r.w} | ${r.act.replace(/\n/g," / ")} |\n`;});
-    });
-  });
-  dl(new Blob([md],{type:"text/markdown"}),`IEP초안_${p.name}_${p.year}_v4.16.md`);
-}
 function saveJson(){
   collectProfile();
-  dl(new Blob([JSON.stringify({app:"iep-wizard",ver:3,profile:state.profile,plans:state.plans,schoolForm:SCHOOL_FORM,minutesForm:MINUTES_FORM},null,1)],{type:"application/json"}),`IEP작업파일_${state.profile.name||"학생"}_v4.16.json`);
+  dl(new Blob([JSON.stringify({app:"iep-wizard",ver:3,profile:state.profile,plans:state.plans,schoolForm:SCHOOL_FORM,minutesForm:MINUTES_FORM},null,1)],{type:"application/json"}),`IEP작업파일_${state.profile.name||"학생"}_v4.21.json`);
   toast("작업 파일을 저장했어요");
 }
 function loadJson(inp){
@@ -1101,25 +1079,32 @@ function parseMinutes(tbls){
   }
   return null;
 }
-function applyMinutes(M,fname){
+function applyMinutes(M){
   const get=re=>{const k=Object.keys(M).find(k=>re.test(k)); return k?M[k].join(" ").replace(/\s+/g," ").trim():"";};
-  const brief=(t,n)=>t; // v4.15: 자르지 않고 전체 문장(사용자 지시 — 요약은 교사가 직접)
   const par=get(/^학부모의견/), uni=get(/^통합학급교사의견/), spe=get(/^특수학급교사의견/), name=get(/^대상학생$/);
-  if(par&&!$("#f-parent").value.trim())$("#f-parent").value=brief(par,3);
-  const team=[uni&&"통합학급: "+brief(uni,2), spe&&"특수학급: "+brief(spe,2)].filter(Boolean).join("\n");
+  if(par&&!$("#f-parent").value.trim())$("#f-parent").value=par;
+  const team=[uni&&"통합학급: "+uni, spe&&"특수학급: "+spe].filter(Boolean).join("\n");
   if(team&&!$("#f-team").value.trim())$("#f-team").value=team;
   if(name&&!$("#f-name").value.trim())$("#f-name").value=name;
   ["국어","수학"].forEach(s=>{const t=get(new RegExp("^"+s+"$")); if(t&&!IMPORTED_PRESENT[s])IMPORTED_PRESENT[s]=t;});
-  const lines=[["학부모 의견",par],["통합학급 교사 의견",uni],["특수학급 교사 의견",spe],["생활지도",get(/^생활지도$/)],["기타",get(/^기타$/)]].filter(x=>x[1]).map(([k,v])=>`- ${k}: ${brief(v,2)}`);
-  return `📄 ${fname} (협의록)\n`+lines.join("\n");
 }
 const EVAL_SCALE={1:"1(전반적 도움 필요)",2:"2(도움 받아 50~80% 수행)",3:"3(스스로 81% 이상 수행)"};
 const SUBJ_WORDS=["국어","수학","사회","과학","체육","음악","미술","실과","생활"];
 const MARK_RE=/[○◯●oO0]/;
+let IMPORT_UNDO=null; // v4.17: 가져오기 직전 상태(잘못된 파일 업로드 되돌리기용)
+function undoImport(){
+  const u=IMPORT_UNDO; if(!u)return;
+  ["f-lastIEP","f-name","f-parent","f-team"].forEach(id=>$("#"+id).value=u[id]);
+  IMPORTED_PRESENT=u.present; IMPORTED_GOALS=u.goals; SCHOOL_FORM=u.school; MINUTES_FORM=u.minutes;
+  IMPORT_UNDO=null; $("#import-undo").style.display="none"; schoolFormNote(); toast("가져오기 전 상태로 되돌렸어요");
+}
 async function importHwpx(inp){
   const files=[...inp.files]; inp.value="";
   if(!files.length)return;
-  const chunks=[], info={name:"",cls:""};
+  IMPORT_UNDO={present:{...IMPORTED_PRESENT},goals:JSON.parse(JSON.stringify(IMPORTED_GOALS)),school:SCHOOL_FORM,minutes:MINUTES_FORM};
+  ["f-lastIEP","f-name","f-parent","f-team"].forEach(id=>IMPORT_UNDO[id]=$("#"+id).value);
+  $("#import-undo").style.display="inline-block";
+  const chunks=[], info={name:""}; let nMin=0;
   for(const f of files){
     try{
       const zip=await JSZip.loadAsync(f);
@@ -1131,20 +1116,20 @@ async function importHwpx(inp){
         for(const tb of doc.getElementsByTagNameNS("*","tbl")) tbls.push(hwpxTableRows(tb));
       }
       const M=parseMinutes(tbls);
-      if(M){ chunks.push(applyMinutes(M,f.name)); MINUTES_FORM={name:f.name,b64:await fileB64(f)}; continue; } // v4.16 협의록
+      if(M){ applyMinutes(M); nMin++; MINUTES_FORM={name:f.name,b64:await fileB64(f)}; continue; } // 협의록 → 의견 칸에만(요약칸 제외, v4.21)
       const chunk=parseIepTables(f.name,tbls,info); chunks.push(chunk);
       if(!/■ 평가서/.test(chunk)) SCHOOL_FORM={name:f.name,b64:await fileB64(f)}; // 평가서·협의록이 아니면 학교 양식으로 보관(마지막 파일 우선)
     }catch(e){ chunks.push(`📄 ${f.name}\n(읽기 실패: ${e.message||"hwpx가 아니거나 손상됨"})`); }
   }
   const txt=chunks.filter(Boolean).join("\n\n");
-  if(!txt){toast("인식할 수 있는 표를 찾지 못했어요");return;}
+  if(!txt&&!nMin){toast("인식할 수 있는 표를 찾지 못했어요");return;}
   const ta=$("#f-lastIEP");
-  ta.value=(ta.value?ta.value+"\n\n":"")+txt;
+  if(txt)ta.value=(ta.value?ta.value+"\n\n":"")+txt;
   if(info.name&&!$("#f-name").value.trim())$("#f-name").value=info.name;
   schoolFormNote();
   const nSubj=Object.keys(IMPORTED_PRESENT).length;
   const nGoal=Object.values(IMPORTED_GOALS).reduce((a,b)=>a+b.length,0);
-  toast(`가져오기 완료 — ${files.length}개 파일${info.name?" · "+info.name:""}${nSubj?` · 현행수준 ${nSubj}개 교과`:""}${nGoal?` · 연간목표 ${nGoal}개(2학기 이어받기 가능)`:""}`);
+  toast(`가져오기 완료 — ${files.length}개 파일${info.name?" · "+info.name:""}${nMin?" · 협의록→학부모·지원팀 의견 칸":""}${nSubj?` · 현행수준 ${nSubj}개 교과`:""}${nGoal?` · 연간목표 ${nGoal}개(2학기 이어받기 가능)`:""}`);
 }
 function hwpxTableRows(tb){ // 표 → [ [ [col,text], ... ] 행순 ]
   const rows={};
@@ -1168,9 +1153,7 @@ function parseIepTables(fname,tbls,info){
     const h=rows.findIndex(r=>cellTexts(r).some(t=>compact(t)==="성명"));
     if(h>=0&&rows[h+1]){
       const nameCol=rows[h].find(c=>compact(c[1])==="성명");
-      const clsCol=rows[h].find(c=>compact(c[1])==="학년반");
       if(nameCol&&!info.name){const v=rows[h+1].find(c=>c[0]===nameCol[0]); if(v&&v[1])info.name=v[1];}
-      if(clsCol&&!info.cls){const v=rows[h+1].find(c=>c[0]===clsCol[0]); if(v&&v[1])info.cls=v[1];}
     }
     // ② 연간 계획 표: 현행수준 + 연간 목표
     if(flat.some(t=>compact(t)==="교과별현행학습수행수준")){
@@ -1282,8 +1265,7 @@ const DOM_ALIAS = {"듣기·말하기":"듣기말하기","듣기말하기":"듣�
   "수와 연산":"수와연산","도형":"도형","측정":"측정","규칙성":"규칙성","자료와 가능성":"자료와가능성",
   "도형과 측정":"도형","변화와 관계":"규칙성"};
 function subjKey(pl){ if(pl.subj==="국어")return "국어"; if(pl.subj==="수학")return "수학"; return "생활"; }
-/* 내장 양식(누리반) + 좌표표. 다른 학교 양식은 v4.13 '우리 학교 양식 내려받기'(detectHmap)가 처리 — 양식팩·데이터팩 업로드는 v4.16에서 삭제 */
-let FORMPACK={name:"누리반 개별화교육계획 양식(내장)", hwpxB64:HWPX_B64, hmap:HMAP};
+/* 내장 양식(누리반) + 좌표표. 다른 학교 양식은 v4.13 '우리 학교 양식 내려받기'(detectHmap)가 처리 — 양식팩·데이터팩 업로드는 v4.21에서 삭제 */
 
 function toggleHwpx(){
   const p=$("#hwpx-panel");
@@ -1291,7 +1273,7 @@ function toggleHwpx(){
   p.style.display=show?"block":"none";
   if(show){
     collectProfile();
-    $("#h-formname").textContent=FORMPACK.name;
+    $("#h-formname").textContent="누리반 개별화교육계획 양식(내장)";
     $("#h-school-btn").disabled=!SCHOOL_FORM;
     $("#h-school-note").textContent=SCHOOL_FORM
       ?`「우리 학교 양식 내려받기」는 1단계에서 가져온 「${SCHOOL_FORM.name}」에서 라벨(성명·현행수준·목표·월별 계획)을 찾아 채웁니다. 인적사항 빈칸·교육방법은 양식의 기존 값을 유지하고, 2학기는 연간 교육목표를 손대지 않습니다. ※ 양식 구조에 따라 우리 학교 개별화 한글 파일은 깨질 수 있습니다 — 한글에서 열어 꼭 확인·수정하세요.`
@@ -1383,7 +1365,7 @@ function goalsByRow(plan,rowsDef){ // 영역행별 목표 묶기 {rowName:[goal.
 /* ================= 양식 미리보기 (v3.9) =================
    hwpx에 채워질 내용을 학교 양식 흐름(현행수준→연간목표→학기목표→주별계획) 그대로 화면에 표시 */
 function assembleSubject(k,sem){ // makeHwpx와 동일 규칙으로 교과 데이터 조립
-  const H=FORMPACK.hmap, res={present:"",annual:{},semg:{},weekly:null};
+  const H=HMAP, res={present:"",annual:{},semg:{},weekly:null};
   state.plans.filter(pl=>subjKey(pl)===k).forEach(pl=>{
     if(pl.present)res.present=pl.present;
     const {out,un}=goalsByRow(pl,H.annual[k].rows);
@@ -1402,7 +1384,7 @@ function renderFormPreview(){
   const box=$("#form-preview"); if(!box)return;
   if(!state.plans.length){box.innerHTML=`<p class="hint">완성된 교과 계획이 없습니다.</p>`;return;}
   collectProfile();
-  const sem=$("#h-sem").value, p=state.profile, H=FORMPACK.hmap;
+  const sem=$("#h-sem").value, p=state.profile, H=HMAP;
   const nl=t=>esc(t||"").replace(/\n/g,"<br>");
   const lbl=r=>DOM_LBL[r]||r;
   const subjects=["국어","수학"].filter(k=>state.plans.some(pl=>subjKey(pl)===k));
@@ -1552,7 +1534,7 @@ async function makeMinutes(){
     put(/^특수학급교사의견/,goals);
     if(p.parent)put(/^학부모의견/,p.parent);
     fixTerms(doc,yr,sem,true);
-    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.16.hwpx`);
+    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.21.hwpx`);
     toast("협의록 hwpx 생성 완료 — 관련서비스·생활지도 등 나머지 칸은 한글에서 확인·수정해 주세요");
   }catch(e){console.error(e);toast("협의록 생성 중 오류: "+e.message);}
 }
@@ -1562,12 +1544,12 @@ async function makeHwpx(mode){
   try{
     const school=mode==="school";
     if(school&&!SCHOOL_FORM){toast("1단계에서 우리 학교 개별화교육계획 hwpx를 먼저 가져와 주세요");return;}
-    const zip=await JSZip.loadAsync(school?SCHOOL_FORM.b64:FORMPACK.hwpxB64,{base64:true});
+    const zip=await JSZip.loadAsync(school?SCHOOL_FORM.b64:HWPX_B64,{base64:true});
     if(!zip.file("Contents/section0.xml"))throw new Error("hwpx 구조가 아님 (.hwp는 한글에서 hwpx로 저장)");
     let xml=await zip.file("Contents/section0.xml").async("string"); // ponytail: 첫 구역만 (양식은 단일 구역이 보통)
     const doc=new DOMParser().parseFromString(xml,"application/xml");
     if(doc.getElementsByTagName("parsererror").length)throw new Error("XML 파싱 오류");
-    const H=school?detectHmap(doc):FORMPACK.hmap;
+    const H=school?detectHmap(doc):HMAP;
     const sem=$("#h-sem").value, p=state.profile;
     const info=[$("#h-classroom").value,p.name,p.sex||"",$("#h-period").value,$("#h-writer").value,$("#h-date").value];
     /* v4.14: 2학기는 연간 교육목표를 수정하지 않는다 — 양식(1학기 파일)에 연간목표가 이미 있으면 그 칸은 손대지 않음 */
@@ -1640,7 +1622,7 @@ async function makeHwpx(mode){
     })();
     if(school)fixTerms(doc,(p.year.match(/\d{4}/)||["2026"])[0],sem,true); // 제목·표 안의 학년도·학기 표기
     const blob=await hwpxBlob(zip,doc);
-    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.16.hwpx`);
+    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.21.hwpx`);
     toast(school&&H.missing.length?`hwpx 생성 완료 — 채우지 못한 칸: ${H.missing.join(", ")} (한글에서 직접 채워 주세요)`:"hwpx 생성 완료! 한글에서 열어 확인해 주세요");
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
@@ -1854,7 +1836,7 @@ async function makeEvalHwpx(){
       nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
     }
     nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
-    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.16.hwpx`);
+    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.21.hwpx`);
     toast(`평가서 생성 완료 (${filled}개 영역) — 한글에서 열어 확인해 주세요`);
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
