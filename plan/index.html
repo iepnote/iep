@@ -3,7 +3,7 @@
 <head><meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>개별화교육계획(IEP) 초안 도우미 v4.13</title>
+<title>개별화교육계획(IEP) 초안 도우미 v4.15</title>
 <style>
 :root{
   --ink:#1a2233; --sub:#5a6478; --line:#dfe4ee; --bg:#f4f6fb; --card:#ffffff;
@@ -130,7 +130,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
 <body>
 <div class="wrap">
   <header class="app no-print">
-    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.13</span>
+    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.15</span>
     <span style="font-size:13px;color:var(--sub)">2022 개정 기본·공통 교육과정 성취기준 기반 · 주별 지도 계획 · 학교 양식(hwpx) 자동 채움</span>
     <span id="pack-badge" style="font-size:12px;color:var(--good);font-weight:700"></span>
   </header>
@@ -185,10 +185,14 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
         <label class="btn" style="display:inline-block">📄 개별화·평가서에서 가져오기 (hwpx)<input type="file" accept=".hwpx" multiple style="display:none" onchange="importHwpx(this)"></label>
         <label class="btn" style="display:inline-block">📂 작업 파일 열기 (.json)<input type="file" accept=".json" style="display:none" onchange="loadJson(this)"></label>
       </div>
-      <p class="hint" style="margin:6px 0 0">작년(지난 학기) 개별화교육계획·평가서 hwpx를 여러 개 선택하면 현행수준·목표·평가 결과를 읽어 이 칸과 교과별 현행수준에 자동으로 채웁니다. ※.hwp는 한글에서 hwpx로 다시 저장 후 사용 · 가져온 <b>개별화교육계획</b> 파일은 마지막 단계 「우리 학교 양식 내려받기」의 양식으로도 쓰입니다.</p>
+      <p class="hint" style="margin:6px 0 0">작년(지난 학기) 개별화교육계획·평가서 hwpx를 여러 개 선택하면 현행수준·목표·평가 결과를 읽어 이 칸과 교과별 현행수준에 자동으로 채웁니다. ※.hwp는 한글에서 hwpx로 다시 저장 후 사용 · 가져온 <b>개별화교육계획</b> 파일은 마지막 단계 「우리 학교 양식 내려받기」의 양식으로, <b>개별화교육지원팀 협의록</b>은 학부모·지원팀 의견 자동 채움과 「이번 학기 협의록 만들기」의 양식으로 쓰입니다.</p>
       <p class="hint" id="school-form-note" style="margin:4px 0 0"></p></div>
-    <div class="field"><label>보호자 희망사항 <span class="opt">(선택)</span></label>
+    <div class="field"><label>학부모 의견 <span class="opt">(선택 — 협의록 hwpx를 가져오면 자동)</span></label>
       <textarea id="f-parent" placeholder="예: 스스로 화장실 사용하기, 친구들과 어울리기를 희망함"></textarea></div>
+    <div class="field"><label>지원팀 의견 <span class="opt">(행동 특성·강점·약점 — 협의록의 통합·특수학급 교사 의견 전문이 들어오니 필요한 부분만 남기세요)</span></label>
+      <textarea id="f-team" placeholder="예: 통합학급: 착석 유지가 어려움 / 특수학급: 1학기보다 도전행동 감소"></textarea></div>
+    <div class="field"><label>평가 준거 문구 <span class="opt">(목표 문장 끝에 붙는 척도 — 학교 양식에 맞게)</span></label>
+      <input type="text" id="f-crit" value="4회기 중 3회기 이상 수행" placeholder="예: 4회기 중 3회기 이상 수행 / 10회 중 8회 이상 성공"></div>
     <div class="btns"><button class="btn primary" onclick="goStep(2)">다음 단계 →</button></div>
   </section>
 
@@ -264,6 +268,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
       <label class="btn" style="display:inline-block">📦 데이터팩·양식팩 열기<input type="file" accept=".json" style="display:none" onchange="loadPack(this)"></label>
       <button class="btn primary" onclick="toggleHwpx()">🏫 학교 양식(hwpx) 만들기</button>
       <button class="btn primary" onclick="toggleEval()">📝 학기말 평가 만들기</button>
+      <button class="btn primary" onclick="makeMinutes()">🗒 이번 학기 협의록(hwpx) 만들기</button>
     </div>
     <div id="eval-panel" class="no-print" style="display:none; margin-top:16px; border:1.5px solid var(--good); border-radius:12px; padding:18px; background:#eef8f3">
       <h3 style="font-size:15px; margin-bottom:4px">📝 학기말 평가 <span class="tag" style="background:#d8efe4;color:var(--good)">계획 → 평가서 연결</span></h3>
@@ -305,6 +310,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
     </div>
     <p class="editable-note no-print">💡 브라우저를 닫으면 내용이 사라집니다. 이어서 작업하려면 <b>작업 파일 저장(.json)</b>으로 보관했다가 다시 여세요.</p>
   </section>
+  <footer class="no-print" style="margin:28px 0 12px;text-align:center;font-size:12px;color:var(--sub);line-height:1.7">iepnote@gmail.com · 특수교사가 만든 협의용 초안 도구 · 2022 개정 특수교육 교육과정 성취기준 기반 · 입력한 학생 정보는 서버로 전송되지 않습니다(브라우저 안에서만 처리)</footer>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -349,6 +355,8 @@ const LEVELS = [
  {tag:"5단계 · 일반화", cond:"교실·가정 등 다양한 생활 장면에서 스스로"}
 ];
 const CRITERIA = ["4회기 중 3회기 이상 수행","10회 시도 중 8회 이상 성공","제시된 과제의 80% 이상 정확도","연속 3회기 이상 유지"];
+/* v4.14: 학교 양식의 평가 척도(1단계 '평가 준거 문구')를 기본값으로 — 목록 맨 앞에 두고 새 목표의 기본 준거로 사용 */
+function critList(){const v=(($("#f-crit")||{}).value||"").trim(); return v&&!CRITERIA.includes(v)?[v,...CRITERIA]:v?[v,...CRITERIA.filter(c=>c!==v)]:CRITERIA;}
 
 /* ================= 상태 ================= */
 let state = {
@@ -422,7 +430,8 @@ function collectProfile(){
     sex:$("#f-sex").value, semMode:semMode(),
     semStart:$("#f-semstart").value, semEnd:$("#f-semend").value,
     disability:[...document.querySelectorAll("#f-disability .chip.sel")].map(c=>c.dataset.v).join(", "),
-    strength:$("#f-strength").value.trim(), lastIEP:$("#f-lastIEP").value.trim(), parent:$("#f-parent").value.trim()
+    strength:$("#f-strength").value.trim(), lastIEP:$("#f-lastIEP").value.trim(), parent:$("#f-parent").value.trim(),
+    team:$("#f-team").value.trim(), crit:$("#f-crit").value.trim()
   };
 }
 
@@ -668,7 +677,7 @@ function buildGoalUI(){
     : "성취기준마다 <b>지원 수준에 따라 촘촘하게 나눈 5개의 목표 예시</b>가 제시됩니다. 학생이 1년 후 도달하기를 기대하는 수준을 고른 뒤, 문장을 자유롭게 다듬어 주세요.";
   const inherited=(sm==="2"&&IMPORTED_GOALS[state.subj])?IMPORTED_GOALS[state.subj]:null;
   state.selected.forEach(d=>{
-    if(!state.goals[d.code]) state.goals[d.code]={level:null,crit:CRITERIA[0],text:""};
+    if(!state.goals[d.code]) state.goals[d.code]={level:null,crit:critList()[0],text:""};
     const g=state.goals[d.code];
     const blk=document.createElement("div"); blk.className="goal-block";
     blk.innerHTML=`<h3><span class="code">[${stripCode(d.code)}]</span> ${esc(d.text)}</h3>`;
@@ -676,6 +685,7 @@ function buildGoalUI(){
       const key=DOM_ALIAS[(d.domain||"").trim()]||"";
       const cand=inherited.filter(x=>!x.dom||!key||DOM_ALIAS[(x.dom||"").trim()]===key);
       if(cand.length){
+        if(!g.text){g.level=null; g.text=cand[0].text; g.inherited=true;} // v4.14: 2학기는 1학기 연간목표를 그대로(수정하지 않음)
         const iw=document.createElement("div");
         iw.innerHTML=`<div style="font-size:12.5px;font-weight:700;color:var(--good);margin-bottom:5px">📄 1학기 계획서의 연간목표 (클릭하여 이어받기)</div>`;
         cand.forEach(x=>{
@@ -687,15 +697,21 @@ function buildGoalUI(){
         blk.appendChild(iw);
       }
     }
+    let lvBox=blk;
+    if(sm==="2"&&g.inherited){ // v4.14: 2학기엔 새 목표 예시를 접어 둠(연간목표는 1학기 것을 유지)
+      const dt=document.createElement("details");
+      dt.innerHTML=`<summary style="font-size:12.5px;color:var(--sub);cursor:pointer;margin:6px 0">연간목표를 새로 고르기 — 2학기에는 권장하지 않음(1학기 목표 유지)</summary>`;
+      blk.appendChild(dt); lvBox=dt;
+    }
     LEVELS.forEach((lv,i)=>{
       const c=document.createElement("div"); c.className="cand"+(g.level===i?" sel":"");
       c.innerHTML=`<span class="lv">${lv.tag}</span><span class="s">${esc(goalSentence(d.text,i,g.crit))}</span>`;
-      c.onclick=()=>{g.level=i; g.text=goalSentence(d.text,i,g.crit); buildGoalUI();};
-      blk.appendChild(c);
+      c.onclick=()=>{g.level=i; g.text=goalSentence(d.text,i,g.crit); g.inherited=false; buildGoalUI();};
+      lvBox.appendChild(c);
     });
     const critRow=document.createElement("div"); critRow.className="row"; critRow.style.marginTop="10px";
     critRow.innerHTML=`<div class="field" style="max-width:280px"><label>평가 준거</label>
-      <select data-code="${d.code}">${CRITERIA.map(c=>`<option ${c===g.crit?"selected":""}>${c}</option>`).join("")}</select></div>
+      <select data-code="${d.code}">${critList().map(c=>`<option ${c===g.crit?"selected":""}>${c}</option>`).join("")}</select></div>
       <div class="field"><label>장기목표 문장 (자유롭게 수정)</label>
       <textarea data-goal="${d.code}" placeholder="위 5개 예시 중 하나를 선택하거나 직접 작성하세요">${esc(g.text)}</textarea>
       <div class="lint-slot">${lintHTML(g.text)}</div></div>`;
@@ -950,7 +966,8 @@ function renderSummary(){
   <tr><th>장애 특성</th><td colspan="5">${esc(p.disability||"-")}</td></tr>
   <tr><th>강점·흥미</th><td colspan="5">${esc(p.strength||"-")}</td></tr>
   <tr><th>전년도 IEP 요약</th><td colspan="5">${esc(p.lastIEP||"-")}</td></tr>
-  <tr><th>보호자 희망</th><td colspan="5">${esc(p.parent||"-")}</td></tr></table></div>`;
+  <tr><th>학부모 의견</th><td colspan="5">${esc(p.parent||"-")}</td></tr>
+  <tr><th>지원팀 의견</th><td colspan="5">${esc(p.team||"-").replace(/\n/g,"<br>")}</td></tr></table></div>`;
   if(!state.plans.length) h+=`<p class="hint">아직 완성된 교과 계획이 없습니다. '다른 교과 추가'를 눌러 시작하세요.</p>`;
   state.plans.forEach((pl,pi)=>{
     h+=`<div class="summary-sec"><h3>${esc(pl.subj)} <span style="font-weight:400;font-size:12.5px;color:var(--sub)">(${esc(pl.cur)}${pl.grade?" · "+esc(pl.grade):""})</span>
@@ -980,7 +997,7 @@ function delPlan(i){state.plans.splice(i,1);renderSummary();renderNav(9);}
 /* ================= 내보내기 ================= */
 function planText(forNeis){
   const p=state.profile; let out="";
-  out+=`■ ${p.year} 개별화교육계획 초안 (협의용)\n학생: ${p.name} (${p.grade})\n장애 특성: ${p.disability||"-"}\n강점·흥미: ${p.strength||"-"}\n전년도 IEP: ${p.lastIEP||"-"}\n보호자 희망: ${p.parent||"-"}\n`;
+  out+=`■ ${p.year} 개별화교육계획 초안 (협의용)\n학생: ${p.name} (${p.grade})\n장애 특성: ${p.disability||"-"}\n강점·흥미: ${p.strength||"-"}\n전년도 IEP: ${p.lastIEP||"-"}\n학부모 의견: ${p.parent||"-"}\n지원팀 의견: ${p.team||"-"}\n`;
   state.plans.forEach(pl=>{
     out+=`\n━━━ [${pl.subj}] (${pl.cur}${pl.grade?" · "+pl.grade:""}) ━━━\n`;
     out+=`▶ 현재 학습 수행 수준\n${pl.present||"-"}\n`;
@@ -1006,7 +1023,7 @@ function copyForNeis(){
 }
 function downloadMd(){
   const p=state.profile;
-  let md=`# ${p.year} 개별화교육계획 초안 (협의용) — ${p.name}\n\n> v4.13 도구로 생성한 초안입니다. 개별화교육지원팀 협의 후 확정하세요.\n\n| 항목 | 내용 |\n|---|---|\n| 학년 | ${p.grade} |\n| 장애 특성 | ${p.disability||"-"} |\n| 강점·흥미 | ${p.strength||"-"} |\n| 전년도 IEP | ${p.lastIEP||"-"} |\n| 보호자 희망 | ${p.parent||"-"} |\n`;
+  let md=`# ${p.year} 개별화교육계획 초안 (협의용) — ${p.name}\n\n> v4.15 도구로 생성한 초안입니다. 개별화교육지원팀 협의 후 확정하세요.\n\n| 항목 | 내용 |\n|---|---|\n| 학년 | ${p.grade} |\n| 장애 특성 | ${p.disability||"-"} |\n| 강점·흥미 | ${p.strength||"-"} |\n| 전년도 IEP | ${p.lastIEP||"-"} |\n| 학부모 의견 | ${p.parent||"-"} |\n| 지원팀 의견 | ${(p.team||"-").replace(/\n/g," / ")} |\n`;
   state.plans.forEach(pl=>{
     md+=`\n## ${pl.subj} (${pl.cur}${pl.grade?" · "+pl.grade:""})\n\n**현재 학습 수행 수준**: ${pl.present||"-"}\n`;
     const sems=semMode()==="1"?["1"]:semMode()==="2"?["2"]:["1","2"];
@@ -1021,11 +1038,11 @@ function downloadMd(){
       pl.weekly[s].forEach(r=>{md+=`| ${r.m} | ${r.w} | ${r.act.replace(/\n/g," / ")} |\n`;});
     });
   });
-  dl(new Blob([md],{type:"text/markdown"}),`IEP초안_${p.name}_${p.year}_v4.13.md`);
+  dl(new Blob([md],{type:"text/markdown"}),`IEP초안_${p.name}_${p.year}_v4.15.md`);
 }
 function saveJson(){
   collectProfile();
-  dl(new Blob([JSON.stringify({app:"iep-wizard",ver:3,profile:state.profile,plans:state.plans,packMeta:packMeta,schoolForm:SCHOOL_FORM},null,1)],{type:"application/json"}),`IEP작업파일_${state.profile.name||"학생"}_v4.13.json`);
+  dl(new Blob([JSON.stringify({app:"iep-wizard",ver:3,profile:state.profile,plans:state.plans,packMeta:packMeta,schoolForm:SCHOOL_FORM,minutesForm:MINUTES_FORM},null,1)],{type:"application/json"}),`IEP작업파일_${state.profile.name||"학생"}_v4.15.json`);
   toast("작업 파일을 저장했어요");
 }
 function loadJson(inp){
@@ -1040,6 +1057,8 @@ function loadJson(inp){
     $("#f-name").value=p.name||""; $("#f-year").value=p.year||"2026학년도";
     $("#f-grade").value=p.grade||"1학년"; $("#f-sex").value=p.sex||"";
     $("#f-strength").value=p.strength||""; $("#f-lastIEP").value=p.lastIEP||""; $("#f-parent").value=p.parent||"";
+    $("#f-team").value=p.team||""; if(p.crit)$("#f-crit").value=p.crit;
+    if(d.minutesForm&&d.minutesForm.b64){MINUTES_FORM=d.minutesForm;schoolFormNote();}
     document.querySelectorAll("#f-disability .chip").forEach(c=>c.classList.toggle("sel",(p.disability||"").includes(c.dataset.v)));
     /* v3.9: 작성 학기 복원 — 구버전 파일(semMode 없음)은 1년 단위로 만든 것 */
     state.semMode=p.semMode||"year";
@@ -1063,8 +1082,39 @@ function loadJson(inp){
 let IMPORTED_PRESENT={};   // 교과 -> 최신 수행수준 후보 (평가서 서술 > 연초 현행수준)
 let IMPORTED_GOALS={};     // 교과 -> [{dom,text}] 1학기 계획서의 연간(장기)목표 — 2학기 모드에서 이어받기용
 let SCHOOL_FORM=null;      // v4.13: {name,b64} 1단계에서 가져온 개별화교육계획 hwpx — '우리 학교 양식 내려받기'의 양식
+let MINUTES_FORM=null;     // v4.14: {name,b64} 지난 학기 개별화교육지원팀 협의록 hwpx — '이번 학기 협의록 만들기'의 양식
 const fileB64=f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(",")[1]);fr.readAsDataURL(f);});
-function schoolFormNote(){const el=$("#school-form-note");if(el)el.textContent=SCHOOL_FORM?`🏫 우리 학교 양식으로 보관됨: ${SCHOOL_FORM.name}`:"";}
+function schoolFormNote(){const el=$("#school-form-note");if(el)el.textContent=[SCHOOL_FORM&&`🏫 우리 학교 양식으로 보관됨: ${SCHOOL_FORM.name}`,MINUTES_FORM&&`🗒 협의록 양식으로 보관됨: ${MINUTES_FORM.name}`].filter(Boolean).join("  ·  ");}
+/* v4.14: 개별화교육지원팀 협의록 — 첫 열 라벨(학년반·대상학생·현행 수행수준·통합/특수학급 교사의견·학부모 의견…) 기준으로 읽는다.
+   ponytail: 라벨=첫 열 셀 또는 짧은 고정 라벨. 값=라벨 뒤 셀들. 요약은 앞 문장 2~3개(AI 요약 아님). */
+const MIN_LBL=/^(학년반|대상학생|배치형태|일시|장소|참석자|주제|안건|국어|수학|사회|과학)$/;
+function parseMinutes(tbls){
+  const cp=t=>(t||"").replace(/\s+/g,"");
+  for(const rows of tbls){
+    const flat=rows.flat().map(c=>cp(c[1]));
+    if(!flat.includes("대상학생")||!flat.some(t=>/^(참석자|안건|주제)$/.test(t)))continue;
+    const M={}; let cur=null;
+    rows.forEach(row=>row.forEach(([c,t])=>{
+      if(!t)return; const k=cp(t);
+      if(c===0||MIN_LBL.test(k)){cur=k; M[cur]=M[cur]||[]; return;}
+      if(cur)M[cur].push(t.trim());
+    }));
+    return M;
+  }
+  return null;
+}
+function applyMinutes(M,fname){
+  const get=re=>{const k=Object.keys(M).find(k=>re.test(k)); return k?M[k].join(" ").replace(/\s+/g," ").trim():"";};
+  const brief=(t,n)=>t; // v4.15: 자르지 않고 전체 문장(사용자 지시 — 요약은 교사가 직접)
+  const par=get(/^학부모의견/), uni=get(/^통합학급교사의견/), spe=get(/^특수학급교사의견/), name=get(/^대상학생$/);
+  if(par&&!$("#f-parent").value.trim())$("#f-parent").value=brief(par,3);
+  const team=[uni&&"통합학급: "+brief(uni,2), spe&&"특수학급: "+brief(spe,2)].filter(Boolean).join("\n");
+  if(team&&!$("#f-team").value.trim())$("#f-team").value=team;
+  if(name&&!$("#f-name").value.trim())$("#f-name").value=name;
+  ["국어","수학"].forEach(s=>{const t=get(new RegExp("^"+s+"$")); if(t&&!IMPORTED_PRESENT[s])IMPORTED_PRESENT[s]=t;});
+  const lines=[["학부모 의견",par],["통합학급 교사 의견",uni],["특수학급 교사 의견",spe],["생활지도",get(/^생활지도$/)],["기타",get(/^기타$/)]].filter(x=>x[1]).map(([k,v])=>`- ${k}: ${brief(v,2)}`);
+  return `📄 ${fname} (협의록)\n`+lines.join("\n");
+}
 const EVAL_SCALE={1:"1(전반적 도움 필요)",2:"2(도움 받아 50~80% 수행)",3:"3(스스로 81% 이상 수행)"};
 const SUBJ_WORDS=["국어","수학","사회","과학","체육","음악","미술","실과","생활"];
 const MARK_RE=/[○◯●oO0]/;
@@ -1082,8 +1132,10 @@ async function importHwpx(inp){
         const doc=new DOMParser().parseFromString(await zip.file(s).async("string"),"text/xml");
         for(const tb of doc.getElementsByTagNameNS("*","tbl")) tbls.push(hwpxTableRows(tb));
       }
+      const M=parseMinutes(tbls);
+      if(M){ chunks.push(applyMinutes(M,f.name)); MINUTES_FORM={name:f.name,b64:await fileB64(f)}; continue; } // v4.15 협의록
       const chunk=parseIepTables(f.name,tbls,info); chunks.push(chunk);
-      if(!/■ 평가서/.test(chunk)) SCHOOL_FORM={name:f.name,b64:await fileB64(f)}; // 평가서가 아니면 학교 양식으로 보관(마지막 파일 우선)
+      if(!/■ 평가서/.test(chunk)) SCHOOL_FORM={name:f.name,b64:await fileB64(f)}; // 평가서·협의록이 아니면 학교 양식으로 보관(마지막 파일 우선)
     }catch(e){ chunks.push(`📄 ${f.name}\n(읽기 실패: ${e.message||"hwpx가 아니거나 손상됨"})`); }
   }
   const txt=chunks.filter(Boolean).join("\n\n");
@@ -1277,10 +1329,10 @@ function toggleHwpx(){
     $("#h-formname").textContent=FORMPACK.name;
     $("#h-school-btn").disabled=!SCHOOL_FORM;
     $("#h-school-note").textContent=SCHOOL_FORM
-      ?`「우리 학교 양식 내려받기」는 1단계에서 가져온 「${SCHOOL_FORM.name}」에서 라벨(성명·현행수준·목표·월별 계획)을 찾아 채웁니다. ※ 양식 구조에 따라 우리 학교 개별화 한글 파일은 깨질 수 있습니다 — 한글에서 열어 꼭 확인·수정하세요.`
+      ?`「우리 학교 양식 내려받기」는 1단계에서 가져온 「${SCHOOL_FORM.name}」에서 라벨(성명·현행수준·목표·월별 계획)을 찾아 채웁니다. 인적사항 빈칸·교육방법은 양식의 기존 값을 유지하고, 2학기는 연간 교육목표를 손대지 않습니다. ※ 양식 구조에 따라 우리 학교 개별화 한글 파일은 깨질 수 있습니다 — 한글에서 열어 꼭 확인·수정하세요.`
       :"우리 학교 양식으로 받으려면 1단계 「개별화·평가서에서 가져오기」로 우리 학교 개별화교육계획 hwpx를 먼저 올려 두세요.";
     const yr=(state.profile.year.match(/\d{4}/)||["2026"])[0];
-    if(!$("#h-classroom").value) $("#h-classroom").value=state.profile.grade+" 누리반";
+    if(!$("#h-classroom").value&&!SCHOOL_FORM) $("#h-classroom").value=state.profile.grade+" 누리반"; // 학교 양식은 빈칸=기존 값 유지
     if(semMode()!=="year") $("#h-sem").value=semMode(); // v3.9: 1단계 작성 학기와 자동 일치
     updatePeriod(yr);
     $("#h-sem").onchange=()=>{updatePeriod(yr); renderFormPreview();};
@@ -1441,11 +1493,15 @@ function detectHmap(doc){
     return {rows,col,allRows:col==null?[]:T.inRows(S,col).map(c=>c.r)};
   };
   tables.forEach((T,ti)=>{
-    // 인적사항: 라벨 아래 빈 칸 우선, 없으면 오른쪽 빈 칸
-    const info=["학년반","성명","성별","교육기간","작성자","작성일"].map(l=>{
-      const L=T.cells.find(x=>x.t===l); if(!L)return null;
-      const LBL=/^(학년반|성명|성별|교육기간|작성자|작성일|교과|영역|평가|교육목표|현행)/, pick=x=>x&&!LBL.test(x.t)?xy(x):null;
-      return pick(T.below(L))||pick(T.right(L));
+    // 인적사항: 라벨 오른쪽 우선(값·빈 칸), 오른쪽이 다른 라벨이면 아래(머리글 행 양식). 성명(이름) 셀과 같은 행±1의 라벨만
+    // — 다른 표의 '교육기간' 열 머리·서명란 '이름' 오인 방지. 라벨 글자는 한글만 비교('학년-반'='학년반')
+    const LBL=/^(학년반|성명|성별|교육기간|작성자|작성일|교과|영역|평가|교육목표|현행|생년월일|특수교육|장애|주소|건강|가족|이름)/;
+    const nt=x=>{const t=x.t.replace(/[^가-힣]/g,""); return t==="이름"?"성명":t;};
+    const anchor=T.cells.find(x=>nt(x)==="성명");
+    const info=!anchor?[]:["학년반","성명","성별","교육기간","작성자","작성일"].map(l=>{
+      const L=T.cells.find(x=>nt(x)===l&&Math.abs(x.r-anchor.r)<=1); if(!L)return null;
+      const pick=x=>x&&!LBL.test(x.t.replace(/[^가-힣]/g,""))?xy(x):null;
+      return pick(T.right(L))||pick(T.below(L));
     });
     if(info.some(Boolean))H.info.push({tbl:ti,cells:info});
     // 현행수준 · 연간(장기)목표 — 같은 표 안의 헤더 행 사이에서 교과 셀을 찾는다
@@ -1487,6 +1543,54 @@ function detectHmap(doc){
   return H;
 }
 
+async function hwpxBlob(zip,doc){ // 직렬화 & 재압축 (계획서·협의록 공용)
+  let out=new XMLSerializer().serializeToString(doc);
+  if(!out.startsWith("<?xml")) out='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+out;
+  const nz=new JSZip();
+  nz.file("mimetype", await zip.file("mimetype").async("uint8array"), {compression:"STORE"});
+  for(const name of Object.keys(zip.files)){
+    if(name==="mimetype"||name==="Contents/section0.xml"||zip.files[name].dir)continue;
+    nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
+  }
+  nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
+  return nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"});
+}
+function cellText(tbl,c,r){const tc=cellOf(tbl,c,r); return tc?[...tc.getElementsByTagNameNS(HP_NS,"t")].map(t=>t.textContent).join("").trim():"";}
+function fixTerms(doc,yr,sem,inTables){ // 학년도·학기 표기 갱신 ("2025학년도 2학기", "2025-2학년도")
+  for(const t of doc.getElementsByTagNameNS(HP_NS,"t")){
+    let up=t; while(up&&up.localName!=="tbl")up=up.parentNode;
+    if((up&&!inTables)||t.childNodes.length!==1||t.firstChild.nodeType!==3)continue;
+    t.textContent=t.textContent.replace(/\d{4}-[12]학년도/g,`${yr}-${sem}학년도`).replace(/\d{4}학년도/g,yr+"학년도").replace(/[12]학기/g,sem+"학기");
+  }
+}
+/* v4.14: 이번 학기 협의록 — 지난 학기 협의록(1단계 업로드)에 초안 내용을 넣는다.
+   채우는 칸: 대상학생 · 일시(빈칸) · 현행 수행수준(국어/수학) · 특수학급 교사의견(교육목표)=이번 학기 교과별 목표 · 학부모 의견(입력했을 때) · 학년도/학기 표기.
+   나머지 칸(관련서비스·생활지도 등)은 지난 학기 내용을 그대로 두어 교사가 한글에서 고친다. */
+async function makeMinutes(){
+  if(!MINUTES_FORM){toast("1단계에서 지난 학기 개별화교육지원팀 협의록 hwpx를 먼저 가져와 주세요");return;}
+  if(!state.plans.length){toast("먼저 교과 계획을 1개 이상 완성해 주세요");return;}
+  collectProfile();
+  try{
+    const zip=await JSZip.loadAsync(MINUTES_FORM.b64,{base64:true});
+    const doc=new DOMParser().parseFromString(await zip.file("Contents/section0.xml").async("string"),"application/xml");
+    const p=state.profile, sem=semMode()==="2"?"2":"1", yr=(p.year.match(/\d{4}/)||["2026"])[0];
+    const cp=t=>(t||"").replace(/\s+/g,"");
+    const tb=[...doc.getElementsByTagNameNS(HP_NS,"tbl")].find(t=>[...t.getElementsByTagNameNS(HP_NS,"t")].some(x=>cp(x.textContent)==="대상학생"));
+    if(!tb)throw new Error("협의록 표(대상학생 칸)를 찾지 못함");
+    const cells=[...tb.getElementsByTagNameNS(HP_NS,"tc")].map(tc=>{const a=tc.getElementsByTagNameNS(HP_NS,"cellAddr")[0],sp=tc.getElementsByTagNameNS(HP_NS,"cellSpan")[0];
+      return {c:+a.getAttribute("colAddr"),r:+a.getAttribute("rowAddr"),cs:sp?+sp.getAttribute("colSpan"):1,t:cp([...tc.getElementsByTagNameNS(HP_NS,"t")].map(x=>x.textContent).join(""))};});
+    const put=(re,text)=>{const L=cells.find(x=>re.test(x.t)); const x=L&&cells.find(y=>y.r===L.r&&y.c===L.c+L.cs); if(x&&text)setCell(doc,tb,x.c,x.r,text);};
+    put(/^대상학생$/,p.name);
+    put(/^일시$/,`${yr}년   월   일   요일 (   :   ~   :   )`);
+    state.plans.forEach(pl=>{ if(pl.present&&(pl.subj==="국어"||pl.subj==="수학"))put(new RegExp("^"+pl.subj+"$"),pl.present); });
+    const goals=state.plans.map(pl=>`【${pl.subj}】\n`+pl.items.map(it=>`- ${it.domain?it.domain+": ":""}${sem==="1"?it.sem1:it.sem2}`).join("\n")).join("\n");
+    put(/^특수학급교사의견/,goals);
+    if(p.parent)put(/^학부모의견/,p.parent);
+    fixTerms(doc,yr,sem,true);
+    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.15.hwpx`);
+    toast("협의록 hwpx 생성 완료 — 관련서비스·생활지도 등 나머지 칸은 한글에서 확인·수정해 주세요");
+  }catch(e){console.error(e);toast("협의록 생성 중 오류: "+e.message);}
+}
 async function makeHwpx(mode){
   if(!state.plans.length){toast("먼저 교과 계획을 1개 이상 완성해 주세요");return;}
   collectProfile();
@@ -1501,16 +1605,18 @@ async function makeHwpx(mode){
     const H=school?detectHmap(doc):FORMPACK.hmap;
     const sem=$("#h-sem").value, p=state.profile;
     const info=[$("#h-classroom").value,p.name,p.sex||"",$("#h-period").value,$("#h-writer").value,$("#h-date").value];
-    H.info.forEach(m=>{const tb=tblOf(doc,m.tbl); m.cells.forEach((c,i)=>c&&setCell(doc,tb,c[0],c[1],info[i]));});
+    /* v4.14: 2학기는 연간 교육목표를 수정하지 않는다 — 양식(1학기 파일)에 연간목표가 이미 있으면 그 칸은 손대지 않음 */
+    const keepAnnual=sem==="2"&&school&&["국어","수학"].some(k=>H.annual[k]&&Object.values(H.annual[k].rows).some(r=>cellText(tblOf(doc,H.annual[k].tbl),H.annual[k].col,r)));
+    H.info.forEach(m=>{const tb=tblOf(doc,m.tbl); m.cells.forEach((c,i)=>c&&info[i]&&setCell(doc,tb,c[0],c[1],info[i]));}); // 빈 입력은 양식의 기존 값 유지
     // 초기화: 매핑된 내용 셀 비우기 (양식에 남은 예시 내용 제거)
     ["국어","수학"].forEach(k=>{ // v4.13: 탐지된 맵은 항목이 없을 수 있음 → 있는 것만
       const pr=H.present[k]; if(pr)pr.cells.forEach(c=>setCell(doc,tblOf(doc,pr.tbl),c[0],c[1],""));
-      const an=H.annual[k]; if(an)(an.allRows||Object.values(an.rows)).forEach(r=>setCell(doc,tblOf(doc,an.tbl),an.col,r,""));
+      const an=H.annual[k]; if(an&&!keepAnnual)(an.allRows||Object.values(an.rows)).forEach(r=>setCell(doc,tblOf(doc,an.tbl),an.col,r,""));
       const sg=H.semGoal[k]; if(sg)(sg.allRows||Object.values(sg.rows)).forEach(r=>{setCell(doc,tblOf(doc,sg.tbl),sg.col,r,"");if(sg.evalCol!=null)setCell(doc,tblOf(doc,sg.tbl),sg.evalCol,r,"");});
       const mk=H.semGoal.marks; if(mk)mk.rows.forEach(r=>mk.cols.forEach(c=>setCell(doc,tblOf(doc,mk.tbl),c,r,"")));
       const mo=H.monthly[k]; if(mo)mo.blocks.flat().forEach(r=>setCell(doc,tblOf(doc,mo.tbl),mo.col,r,""));
     });
-    if(H.annual["생활"]&&H.annual["생활"].cells) H.annual["생활"].cells.forEach(c=>setCell(doc,tblOf(doc,H.annual["생활"].tbl),c[0],c[1],""));
+    if(H.annual["생활"]&&H.annual["생활"].cells&&!keepAnnual) H.annual["생활"].cells.forEach(c=>setCell(doc,tblOf(doc,H.annual["생활"].tbl),c[0],c[1],""));
     if(H.semGoal["생활"]) H.semGoal["생활"].cells.forEach(c=>setCell(doc,tblOf(doc,H.semGoal["생활"].tbl||1),c[0],c[1],""));
     // 월 라벨 — v4.1: 학기 기간(달력)에서 동적 생성 (8월 개학이면 8월~12/1월)
     const monthNames=semMonths(sem);
@@ -1534,7 +1640,7 @@ async function makeHwpx(mode){
       const firstRow=Object.keys(rowsDef)[0];
       if(un.length)(out[firstRow]=out[firstRow]||[]).push(...un);
       Object.entries(out).forEach(([rk,items])=>{
-        if(an)setCell(doc,tblOf(doc,an.tbl),an.col,an.rows[rk],items.map(i=>"- "+i.text).join("\n"));
+        if(an&&!keepAnnual)setCell(doc,tblOf(doc,an.tbl),an.col,an.rows[rk],items.map(i=>"- "+i.text).join("\n"));
         if(sg){
           setCell(doc,tblOf(doc,sg.tbl),sg.col,sg.rows[rk],items.map(i=>"- "+(sem==="1"?i.sem1:i.sem2)).join("\n"));
           if(sg.evalCol!=null)setCell(doc,tblOf(doc,sg.tbl),sg.evalCol,sg.rows[rk],"관찰평가\n수행평가");
@@ -1543,7 +1649,7 @@ async function makeHwpx(mode){
       // 월별 계획 — v3: 주별 활동을 행에 1:1 배치 (행 수 = 주 수)
       const mo=H.monthly[k]; if(!mo)return; const tm=tblOf(doc,mo.tbl);
       mo.labels.forEach((c,i)=>setCell(doc,tm,c[0],c[1],monthNames[i]));
-      if(mo.method)setCell(doc,tm,mo.method[0],mo.method[1],(k==="국어"?$("#h-method-kor"):$("#h-method-math")).value);
+      if(mo.method&&!(school&&cellText(tm,mo.method[0],mo.method[1])))setCell(doc,tm,mo.method[0],mo.method[1],(k==="국어"?$("#h-method-kor"):$("#h-method-math")).value); // 학교 양식에 교육방법이 있으면 유지
       const wk=(pl.weekly&&pl.weekly[sem])?pl.weekly[sem]:[];
       const byMonth={}; wk.forEach(r=>{(byMonth[normM(r.m)]=byMonth[normM(r.m)]||[]).push(r.act);});
       mo.blocks.forEach((rows,bi)=>{
@@ -1558,7 +1664,7 @@ async function makeHwpx(mode){
     // 생활(그 외) 채움
     if(lifeGoals.length)(()=>{
       const anL=H.annual["생활"];
-      if(anL&&anL.cells) setCell(doc,tblOf(doc,anL.tbl),anL.cells[0][0],anL.cells[0][1],lifeGoals.map(g=>"- "+g.text).join("\n"));
+      if(anL&&anL.cells&&!keepAnnual) setCell(doc,tblOf(doc,anL.tbl),anL.cells[0][0],anL.cells[0][1],lifeGoals.map(g=>"- "+g.text).join("\n"));
       const sg=H.semGoal["생활"]; if(!sg)return;
       sg.cells.forEach((c,i)=>{ if(lifeGoals[i]) setCell(doc,tblOf(doc,sg.tbl),c[0],c[1],"- "+(sem==="1"?lifeGoals[i].sem1:lifeGoals[i].sem2)); });
       if(lifeGoals.length>sg.cells.length){
@@ -1567,25 +1673,9 @@ async function makeHwpx(mode){
       }
       if(sg.evalCell)setCell(doc,tblOf(doc,sg.tbl),sg.evalCell[0],sg.evalCell[1],"관찰평가");
     })();
-    if(school){ // 표 밖 제목("2025학년도 2학기 개별화교육계획" 등)의 학년도·학기를 현재 값으로
-      const yr=(p.year.match(/\d{4}/)||["2026"])[0];
-      for(const t of doc.getElementsByTagNameNS(HP_NS,"t")){
-        let up=t; while(up&&up.localName!=="tbl")up=up.parentNode;
-        if(!up&&t.childNodes.length===1&&t.firstChild.nodeType===3) t.textContent=t.textContent.replace(/\d{4}학년도/g,yr+"학년도").replace(/[12]학기/g,sem+"학기");
-      }
-    }
-    // 직렬화 & 재압축
-    let out=new XMLSerializer().serializeToString(doc);
-    if(!out.startsWith("<?xml")) out='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+out;
-    const nz=new JSZip();
-    nz.file("mimetype", await zip.file("mimetype").async("uint8array"), {compression:"STORE"});
-    for(const name of Object.keys(zip.files)){
-      if(name==="mimetype"||name==="Contents/section0.xml"||zip.files[name].dir)continue;
-      nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
-    }
-    nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
-    const blob=await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"});
-    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.13.hwpx`);
+    if(school)fixTerms(doc,(p.year.match(/\d{4}/)||["2026"])[0],sem,true); // 제목·표 안의 학년도·학기 표기
+    const blob=await hwpxBlob(zip,doc);
+    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.15.hwpx`);
     toast(school&&H.missing.length?`hwpx 생성 완료 — 채우지 못한 칸: ${H.missing.join(", ")} (한글에서 직접 채워 주세요)`:"hwpx 생성 완료! 한글에서 열어 확인해 주세요");
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
@@ -1799,7 +1889,7 @@ async function makeEvalHwpx(){
       nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
     }
     nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
-    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.13.hwpx`);
+    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.15.hwpx`);
     toast(`평가서 생성 완료 (${filled}개 영역) — 한글에서 열어 확인해 주세요`);
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
