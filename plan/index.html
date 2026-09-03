@@ -3,7 +3,7 @@
 <head><meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>개별화교육계획(IEP) 초안 도우미 v4.21</title>
+<title>개별화교육계획(IEP) 초안 도우미 v4.22</title>
 <style>
 :root{
   --ink:#1a2233; --sub:#5a6478; --line:#dfe4ee; --bg:#f4f6fb; --card:#ffffff;
@@ -129,7 +129,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
 <body>
 <div class="wrap">
   <header class="app no-print">
-    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.21</span>
+    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.22</span>
   </header>
   <div class="disclaimer no-print">
     ⚠️ 본 도구가 생성하는 내용은 <b>개별화교육지원팀 협의용 초안</b>입니다. 최종 개별화교육계획은 반드시 지원팀 협의와 교사의 전문적 판단을 거쳐 확정하고, 나이스(NEIS)에 입력해 주세요. 학생 개인정보 보호를 위해 <b>실명 대신 가명이나 이니셜</b> 사용을 권장합니다.
@@ -1018,7 +1018,7 @@ function copyForNeis(){
 }
 function saveJson(){
   collectProfile();
-  dl(new Blob([JSON.stringify({app:"iep-wizard",ver:3,profile:state.profile,plans:state.plans,schoolForm:SCHOOL_FORM,minutesForm:MINUTES_FORM},null,1)],{type:"application/json"}),`IEP작업파일_${state.profile.name||"학생"}_v4.21.json`);
+  dl(new Blob([JSON.stringify({app:"iep-wizard",ver:3,profile:state.profile,plans:state.plans,schoolForm:SCHOOL_FORM,minutesForm:MINUTES_FORM},null,1)],{type:"application/json"}),`IEP작업파일_${state.profile.name||"학생"}_v4.22.json`);
   toast("작업 파일을 저장했어요");
 }
 function loadJson(inp){
@@ -1116,7 +1116,7 @@ async function importHwpx(inp){
         for(const tb of doc.getElementsByTagNameNS("*","tbl")) tbls.push(hwpxTableRows(tb));
       }
       const M=parseMinutes(tbls);
-      if(M){ applyMinutes(M); nMin++; MINUTES_FORM={name:f.name,b64:await fileB64(f)}; continue; } // 협의록 → 의견 칸에만(요약칸 제외, v4.21)
+      if(M){ applyMinutes(M); nMin++; MINUTES_FORM={name:f.name,b64:await fileB64(f)}; continue; } // 협의록 → 의견 칸에만(요약칸 제외, v4.22)
       const chunk=parseIepTables(f.name,tbls,info); chunks.push(chunk);
       if(!/■ 평가서/.test(chunk)) SCHOOL_FORM={name:f.name,b64:await fileB64(f)}; // 평가서·협의록이 아니면 학교 양식으로 보관(마지막 파일 우선)
     }catch(e){ chunks.push(`📄 ${f.name}\n(읽기 실패: ${e.message||"hwpx가 아니거나 손상됨"})`); }
@@ -1179,8 +1179,8 @@ function parseIepTables(fname,tbls,info){
           }
         }
       });
-      if(Object.keys(presYear).length)secs.push("■ 현행수준(연초): "+Object.entries(presYear).map(([s,t])=>`(${s}) ${t}`).join(" / "));
-      if(goals.length)secs.push("■ 연간 교육 목표:\n"+goals.join("\n"));
+      /* v4.22: 현행수준·연간목표 본문은 요약칸에 넣지 않음 — 2단계 현행수준(IMPORTED_PRESENT)·4단계 이어받기(IMPORTED_GOALS)로만 */
+      if(Object.keys(presYear).length||goals.length)secs.push(`■ 현행수준 ${Object.keys(presYear).length}개 교과·연간목표 ${goals.length}개 → 2단계 현행수준·4단계 이어받기에 반영`);
     }
     // ③ 학기 교육목표·평가 표: ○ 위치 → 평가 척도
     const hd=rows.findIndex(r=>{const ts=cellTexts(r).map(compact);return ts.includes("영역")&&ts.includes("교육목표");});
@@ -1212,7 +1212,7 @@ function parseIepTables(fname,tbls,info){
         lines.push(`[${subj||"?"}${dom?"·"+dom[1]:""}] ${body}`);
         if(subj&&SUBJ_WORDS.includes(subj))evalNarr[subj]=(evalNarr[subj]?evalNarr[subj]+" ":"")+body;
       });
-      if(lines.length)secs.push("■ 평가서(서술):\n"+lines.join("\n"));
+      if(lines.length)secs.push(`■ 평가서(서술) ${lines.length}개 영역 → 2단계 현행수준에 반영`); // v4.22: 본문은 요약칸 제외 (■ 평가서 표식은 학교 양식 판정에 쓰임)
     }
   });
   // 교과별 현행수준 후보 저장 — 평가서 서술이 있으면 그것이 최신
@@ -1265,7 +1265,7 @@ const DOM_ALIAS = {"듣기·말하기":"듣기말하기","듣기말하기":"듣�
   "수와 연산":"수와연산","도형":"도형","측정":"측정","규칙성":"규칙성","자료와 가능성":"자료와가능성",
   "도형과 측정":"도형","변화와 관계":"규칙성"};
 function subjKey(pl){ if(pl.subj==="국어")return "국어"; if(pl.subj==="수학")return "수학"; return "생활"; }
-/* 내장 양식(누리반) + 좌표표. 다른 학교 양식은 v4.13 '우리 학교 양식 내려받기'(detectHmap)가 처리 — 양식팩·데이터팩 업로드는 v4.21에서 삭제 */
+/* 내장 양식(누리반) + 좌표표. 다른 학교 양식은 v4.13 '우리 학교 양식 내려받기'(detectHmap)가 처리 — 양식팩·데이터팩 업로드는 v4.22에서 삭제 */
 
 function toggleHwpx(){
   const p=$("#hwpx-panel");
@@ -1534,7 +1534,7 @@ async function makeMinutes(){
     put(/^특수학급교사의견/,goals);
     if(p.parent)put(/^학부모의견/,p.parent);
     fixTerms(doc,yr,sem,true);
-    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.21.hwpx`);
+    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.22.hwpx`);
     toast("협의록 hwpx 생성 완료 — 관련서비스·생활지도 등 나머지 칸은 한글에서 확인·수정해 주세요");
   }catch(e){console.error(e);toast("협의록 생성 중 오류: "+e.message);}
 }
@@ -1622,7 +1622,7 @@ async function makeHwpx(mode){
     })();
     if(school)fixTerms(doc,(p.year.match(/\d{4}/)||["2026"])[0],sem,true); // 제목·표 안의 학년도·학기 표기
     const blob=await hwpxBlob(zip,doc);
-    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.21.hwpx`);
+    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.22.hwpx`);
     toast(school&&H.missing.length?`hwpx 생성 완료 — 채우지 못한 칸: ${H.missing.join(", ")} (한글에서 직접 채워 주세요)`:"hwpx 생성 완료! 한글에서 열어 확인해 주세요");
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
@@ -1836,7 +1836,7 @@ async function makeEvalHwpx(){
       nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
     }
     nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
-    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.21.hwpx`);
+    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.22.hwpx`);
     toast(`평가서 생성 완료 (${filled}개 영역) — 한글에서 열어 확인해 주세요`);
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
