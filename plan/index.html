@@ -3,7 +3,7 @@
 <head><meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>개별화교육계획(IEP) 초안 도우미 v4.69</title>
+<title>개별화교육계획(IEP) 초안 도우미 v4.70</title>
 <style>
 :root{
   --ink:#1a2233; --sub:#5a6478; --line:#dfe4ee; --bg:#f4f6fb; --card:#ffffff;
@@ -139,7 +139,7 @@ table.plan td[contenteditable]:focus{outline:2px solid var(--accent-soft);}
 <body>
 <div class="wrap">
   <header class="app no-print">
-    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.69</span>
+    <h1>개별화교육계획(IEP) 초안 도우미</h1><span class="ver">v4.70</span>
     <a class="guide-link" href="https://iepnote.github.io/iep/plan/guide/" target="_blank" rel="noopener">❓ 사용법</a>
   </header>
   <div class="disclaimer no-print">
@@ -2192,13 +2192,22 @@ function detectHmap(doc){
   return H;
 }
 
-async function hwpxBlob(zip,doc){ // 직렬화 & 재압축 (계획서·협의록 공용)
+/* v4.70: 색 없음 표기 "none" → "#FFFFFFFF". 업데이트되지 않은 한글 2018 초기판은 색 속성의 "none"을 검은색으로 읽어
+   글자 자리가 까맣게 나온다. "#FFFFFFFF"는 한글 2018이 직접 쓰는 색 없음 표기다. 태그 안의 색 속성(…Color·…color)만 바꾸고
+   본문 글자와 다른 속성의 "none"(테두리 종류 등)은 건드리지 않는다 */
+function fixNoneColor(x){return x.replace(/<[^<>]+>/g,tag=>tag.indexOf('olor="none"')<0?tag:tag.replace(/(\b\w*[Cc]olor)="none"/g,'$1="#FFFFFFFF"'));}
+async function hwpxBlob(zip,doc){ // 직렬화 & 재압축 (계획서·협의록·평가서 공용)
   let out=new XMLSerializer().serializeToString(doc);
   if(!out.startsWith("<?xml")) out='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+out;
+  out=fixNoneColor(out);
   const nz=new JSZip();
   nz.file("mimetype", await zip.file("mimetype").async("uint8array"), {compression:"STORE"});
   for(const name of Object.keys(zip.files)){
     if(name==="mimetype"||name==="Contents/section0.xml"||zip.files[name].dir)continue;
+    if(/^Contents\/.+\.xml$/.test(name)){ // v4.70: header.xml 등 — 바뀐 것이 있을 때만 글로 다시 쓴다(없으면 원래 바이트 그대로)
+      const s=await zip.file(name).async("string"), t=fixNoneColor(s);
+      if(t!==s){nz.file(name, t, {compression:"DEFLATE"}); continue;}
+    }
     nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
   }
   nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
@@ -2236,7 +2245,7 @@ async function makeMinutes(){
     put(/^특수학급교사의견/,goals);
     if(p.parent)put(/^학부모의견/,p.parent);
     fixTerms(doc,yr,sem,true);
-    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.69.hwpx`);
+    dl(await hwpxBlob(zip,doc),`개별화교육지원팀협의록_${p.name||"학생"}_${sem}학기_v4.70.hwpx`);
     toast("협의록 hwpx 생성 완료 — 관련서비스·생활지도 등 나머지 칸은 한글에서 확인·수정해 주세요");
   }catch(e){console.error(e);toast("협의록 생성 중 오류: "+e.message);}
 }
@@ -2267,7 +2276,7 @@ async function makeHwpx(mode){
     if(school&&!(await showFillReport(rep,S,SCHOOL_FORM.name))){toast("내려받기를 취소했어요");return;}
     if(school)fixTerms(doc,(p.year.match(/\d{4}/)||["2026"])[0],sem,true); // 제목·표 안의 학년도·학기 표기
     const blob=await hwpxBlob(zip,doc);
-    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.69.hwpx`);
+    dl(blob, `${school?"우리학교양식_":""}개별화교육계획_${p.name||"학생"}_${$("#h-sem").value}학기_v4.70.hwpx`);
     toast(school&&rep.manual.length?`hwpx 생성 완료 — 손볼 곳 ${rep.manual.length}건: ${rep.manual.slice(0,3).join(" / ")}${rep.manual.length>3?" 등":""} (한글에서 확인해 주세요)`:"hwpx 생성 완료! 한글에서 열어 확인해 주세요");
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
@@ -2472,16 +2481,7 @@ async function makeEvalHwpx(){
       });
     });
     if(!filled){toast("성취 수준을 먼저 평가해 주세요 (평어가 없습니다)");return;}
-    let out=new XMLSerializer().serializeToString(doc);
-    if(!out.startsWith("<?xml")) out='<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'+out;
-    const nz=new JSZip();
-    nz.file("mimetype", await zip.file("mimetype").async("uint8array"), {compression:"STORE"});
-    for(const name of Object.keys(zip.files)){
-      if(name==="mimetype"||name==="Contents/section0.xml"||zip.files[name].dir)continue;
-      nz.file(name, await zip.file(name).async("uint8array"), {compression:"DEFLATE"});
-    }
-    nz.file("Contents/section0.xml", out, {compression:"DEFLATE"});
-    dl(await nz.generateAsync({type:"blob", mimeType:"application/hwp+zip"}), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.69.hwpx`);
+    dl(await hwpxBlob(zip,doc), `개별화교육평가서_${p.name||"학생"}_${sem}학기_v4.70.hwpx`);
     toast(`평가서 생성 완료 (${filled}개 영역) — 한글에서 열어 확인해 주세요`);
   }catch(e){console.error(e);toast("생성 중 오류: "+e.message);}
 }
